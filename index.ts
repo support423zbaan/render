@@ -173,6 +173,47 @@ io.on("connection", (socket: Socket) => {
     socket.to(roomId).emit("partner-typing", isTyping);
   });
 
+  // Game request/accept/decline handlers
+  socket.on("request-game", ({ roomId, gameType }) => {
+    socket.to(roomId).emit("game-request", { gameType });
+    console.log(`Game request sent in room ${roomId}: ${gameType}`);
+  });
+
+  socket.on("accept-game", ({ roomId, gameType }) => {
+    socket.to(roomId).emit("game-accepted", { gameType });
+    console.log(`Game accepted in room ${roomId}: ${gameType}`);
+  });
+
+  socket.on("decline-game", ({ roomId, gameType }) => {
+    socket.to(roomId).emit("game-declined", { gameType });
+    console.log(`Game declined in room ${roomId}: ${gameType}`);
+  });
+
+  socket.on("start-game", ({ roomId, gameType }) => {
+    socket.to(roomId).emit("game-started", { gameType });
+    console.log(`Game started in room ${roomId}: ${gameType}`);
+  });
+
+  // Tic Tac Toe move handler
+  socket.on("tic-tac-toe-move", ({ roomId, index, symbol }) => {
+    socket.to(roomId).emit("tic-tac-toe-move", { index, symbol });
+  });
+
+  // Tic Tac Toe play again handler
+  socket.on("tic-tac-toe-play-again", ({ roomId }) => {
+    socket.to(roomId).emit("tic-tac-toe-play-again");
+  });
+
+  // Would You Rather choice handler
+  socket.on("wyr-choice", ({ roomId, choice }) => {
+    socket.to(roomId).emit("wyr-choice", { choice });
+  });
+
+  // Would You Rather next question handler
+  socket.on("wyr-next-question", ({ roomId, question }) => {
+    socket.to(roomId).emit("wyr-next-question", { question });
+  });
+
   socket.on("skip-partner", () => {
     const currentUser = activeUsers.get(socket.id);
     if (!currentUser || !currentUser.partnerId) return;
