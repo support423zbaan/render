@@ -1,8 +1,18 @@
-import { createServer } from "http";
+import { createServer, IncomingMessage, ServerResponse } from "http";
 import { Server, Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 
-const httpServer = createServer();
+// Create HTTP server with health check endpoint
+const httpServer = createServer((req: IncomingMessage, res: ServerResponse) => {
+  if (req.url === "/" || req.url === "/health") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ status: "ok", timestamp: new Date().toISOString() }));
+  } else {
+    res.writeHead(404);
+    res.end();
+  }
+});
+
 const io = new Server(httpServer, {
   cors: {
     origin: [
